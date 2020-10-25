@@ -16,6 +16,7 @@ type root struct {
 	DataBases databases `yaml:"databases"`
 }
 
+//数据库
 type databases struct {
 
 	//源数据库

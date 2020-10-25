@@ -9,8 +9,8 @@ import (
 )
 
 var (
-	SourceEngine *xorm.Engine
-	TargetEngine *xorm.Engine
+	sourceEngine *xorm.Engine
+	targetEngine *xorm.Engine
 )
 
 func InitDataBases() {
@@ -24,17 +24,17 @@ func InitDataBases() {
 			config.Conf.DataBases.Source.Address,
 			config.Conf.DataBases.Source.Port,
 			config.Conf.DataBases.Source.Name)
-		SourceEngine, err = xorm.NewEngine("mysql", connString)
+		sourceEngine, err = xorm.NewEngine("mysql", connString)
 		if err != nil {
 			logs.Emergency("源库连接失败:%s", err.Error())
 		}
-		if err = SourceEngine.Ping(); err != nil {
+		if err = sourceEngine.Ping(); err != nil {
 			logs.Emergency("源库Ping失败:%s", err.Error())
 			return
 		}
-		SourceEngine.SetMaxIdleConns(2)
-		SourceEngine.SetMaxOpenConns(50)
-		logs.Info("初始化源库成功")
+		sourceEngine.SetMaxIdleConns(2)
+		sourceEngine.SetMaxOpenConns(50)
+		logs.Info("初始化源库(%s)成功", config.Conf.DataBases.Source.Name)
 	}
 	//endregion
 
@@ -47,17 +47,17 @@ func InitDataBases() {
 			config.Conf.DataBases.Target.Address,
 			config.Conf.DataBases.Target.Port,
 			config.Conf.DataBases.Target.Name)
-		TargetEngine, err = xorm.NewEngine("mysql", connString)
+		targetEngine, err = xorm.NewEngine("mysql", connString)
 		if err != nil {
 			logs.Emergency("目标库连接失败:%s", err.Error())
 		}
-		if err = TargetEngine.Ping(); err != nil {
+		if err = targetEngine.Ping(); err != nil {
 			logs.Emergency("目标库Ping失败:%s", err.Error())
 			return
 		}
-		TargetEngine.SetMaxIdleConns(2)
-		TargetEngine.SetMaxOpenConns(50)
-		logs.Info("初始化目标库成功")
+		targetEngine.SetMaxIdleConns(2)
+		targetEngine.SetMaxOpenConns(50)
+		logs.Info("初始化目标库(%s)成功", config.Conf.DataBases.Target.Name)
 	}
 	//endregion
 
