@@ -6,7 +6,7 @@ import (
 	"xorm.io/xorm/schemas"
 )
 
-func GetTableList(dataBaseType model.DataBaseType) (schemaMap map[string]*schemas.Table, err error) {
+func getTableSchemaList(dataBaseType model.DataBaseType) (schemaMap map[string]*schemas.Table, err error) {
 	var (
 		schemaSlice []*schemas.Table
 	)

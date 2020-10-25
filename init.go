@@ -8,13 +8,14 @@ import (
 	"runtime"
 )
 
-const version = "2020.1025.1911"
+const version = "2020.1025.2223"
 
 func init() {
 	initLog()
 	initEnv()
 	initConfig()
 	service.InitDataBases()
+	service.CheckDataBases()
 }
 
 func initLog() {
