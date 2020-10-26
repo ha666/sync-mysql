@@ -3,6 +3,7 @@ package service
 import (
 	"fmt"
 	"strconv"
+	"time"
 
 	"gitea.com/ha666/sync-mysql/config"
 	"github.com/ha666/golibs"
@@ -105,6 +106,24 @@ func parseSourceSchema(tableName string, result []map[string]interface{}) (int, 
 							logs.Emergency("表:%s,字段:%s,值:%v,无效的类型:%T", tableName, col.Name, cs, cs)
 						case []uint8:
 							args = append(args, golibs.SliceByteToString(m))
+						case nil:
+							args = append(args, nil)
+						}
+					case schemas.DateTime:
+						switch m := cs.(type) {
+						default:
+							logs.Emergency("表:%s,字段:%s,值:%v,无效的类型:%T", tableName, col.Name, cs, cs)
+						case time.Time:
+							args = append(args, m.Format(golibs.Time_TIMEStandard))
+						case nil:
+							args = append(args, nil)
+						}
+					case schemas.TimeStamp:
+						switch m := cs.(type) {
+						default:
+							logs.Emergency("表:%s,字段:%s,值:%v,无效的类型:%T", tableName, col.Name, cs, cs)
+						case time.Time:
+							args = append(args, m.Format(golibs.Time_TIMEStandard))
 						case nil:
 							args = append(args, nil)
 						}

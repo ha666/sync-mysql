@@ -134,6 +134,15 @@ func processInsert(Sql string, Args []interface{}, stmt sqlparser.Statement) err
 							case nil:
 								args = append(args, nil)
 							}
+						case schemas.DateTime, schemas.TimeStamp:
+							switch obj.(type) {
+							default:
+								logs.Emergency("表:%s,字段:%s,值:%v,无效的类型:%T", tableName, col.Name, obj, obj)
+							case string:
+								args = append(args, obj)
+							case nil:
+								args = append(args, nil)
+							}
 						}
 						break
 					}
@@ -162,6 +171,15 @@ func processInsert(Sql string, Args []interface{}, stmt sqlparser.Statement) err
 								args = append(args, obj)
 							}
 						case schemas.Char, schemas.Varchar, schemas.NChar, schemas.NVarchar, schemas.TinyText, schemas.Text, schemas.NText, schemas.Clob, schemas.MediumText, schemas.LongText, schemas.Uuid, schemas.UniqueIdentifier, schemas.SysName:
+							switch obj.(type) {
+							default:
+								logs.Emergency("表:%s,字段:%s,值:%v,无效的类型:%T", tableName, col.Name, obj, obj)
+							case string:
+								args = append(args, obj)
+							case nil:
+								args = append(args, nil)
+							}
+						case schemas.DateTime, schemas.TimeStamp:
 							switch obj.(type) {
 							default:
 								logs.Emergency("表:%s,字段:%s,值:%v,无效的类型:%T", tableName, col.Name, obj, obj)
