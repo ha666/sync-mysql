@@ -8,7 +8,7 @@ import (
 	"runtime"
 )
 
-const version = "2020.1025.2223"
+const version = "2020.1026.1708"
 
 func init() {
 	initLog()

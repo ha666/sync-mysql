@@ -11,10 +11,10 @@ import (
 )
 
 var (
-	sourceEngine    *xorm.Engine
-	targetEngine    *xorm.Engine
-	sourceSchemaMap map[string]*schemas.Table
-	targetSchemaMap map[string]*schemas.Table
+	sourceEngine        *xorm.Engine
+	targetEngine        *xorm.Engine
+	sourceSchemaColumns map[string][]*schemas.Column
+	targetSchemaColumns map[string][]*schemas.Column
 )
 
 func InitDataBases() {
@@ -73,14 +73,13 @@ func CheckDataBases() {
 	{
 		logs.Info("开始检查源数据库")
 		var err error
-		sourceSchemaMap, err = getTableSchemaList(model.DataBaseSource)
+		sourceSchemaColumns, err = getTableSchemaList(model.DataBaseSource)
 		if err != nil {
 			logs.Emergency("查询源数据库结构出错:%s", err.Error())
 		}
-		if sourceSchemaMap == nil || len(sourceSchemaMap) <= 0 {
+		if sourceSchemaColumns == nil || len(sourceSchemaColumns) <= 0 {
 			logs.Emergency("查询源数据库结构出错:空的")
 		}
-		logs.Info("完成检查源数据库")
 	}
 	//endregion
 
@@ -88,11 +87,11 @@ func CheckDataBases() {
 	{
 		logs.Info("开始检查目标数据库")
 		var err error
-		targetSchemaMap, err = getTableSchemaList(model.DataBaseTarget)
+		targetSchemaColumns, err = getTableSchemaList(model.DataBaseTarget)
 		if err != nil {
 			logs.Emergency("查询目标数据库结构出错:%s", err.Error())
 		}
-		if targetSchemaMap == nil || len(targetSchemaMap) <= 0 {
+		if targetSchemaColumns == nil || len(targetSchemaColumns) <= 0 {
 			logs.Emergency("查询目标数据库结构出错:空的")
 		}
 		logs.Info("完成检查目标数据库")
@@ -101,14 +100,13 @@ func CheckDataBases() {
 
 	//region 检查数据库匹配程度
 	{
-		for sn, ss := range sourceSchemaMap {
-			logs.Info("开始检查表:%s", sn)
-			if ts, ok := targetSchemaMap[sn]; !ok {
+		for sn, ss := range sourceSchemaColumns {
+			if ts, ok := targetSchemaColumns[sn]; !ok {
 				logs.Warn("目标数据库中不存在表:%s", sn)
 			} else {
-				for _, si := range ss.Columns() {
+				for _, si := range ss {
 					isExist := false
-					for _, ti := range ts.Columns() {
+					for _, ti := range ts {
 						if si.Name == ti.Name {
 							if si.SQLType.Name != ti.SQLType.Name ||
 								si.SQLType.DefaultLength != ti.SQLType.DefaultLength ||
@@ -124,7 +122,7 @@ func CheckDataBases() {
 						}
 					}
 					if !isExist {
-						logs.Warn("表:%s,目标表中不存在字段:%s", ss.Name, si.Name)
+						logs.Warn("表:%s,目标表中不存在字段:%s", sn, si.Name)
 					}
 				}
 			}

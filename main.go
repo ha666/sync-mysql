@@ -1,11 +1,11 @@
 package main
 
 import (
-	"gitea.com/ha666/sync-mysql/config"
-	"github.com/ha666/logs"
+	"gitea.com/ha666/sync-mysql/service"
 )
 
 func main() {
-	logs.Info("源库:%s", config.Conf.DataBases.Source.Name)
-	logs.Info("目标库:%s", config.Conf.DataBases.Target.Name)
+	go service.StartWrite()
+	go service.StartRead()
+	select {}
 }

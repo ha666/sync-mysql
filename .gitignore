@@ -16,3 +16,6 @@
 # vendor/
 
 .idea/
+sync-mysql
+sync_mysql
+ha666_config.yaml
