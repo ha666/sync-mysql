@@ -2,6 +2,7 @@ package service
 
 import (
 	"fmt"
+
 	"gitea.com/ha666/sync-mysql/config"
 	"gitea.com/ha666/sync-mysql/model"
 	_ "github.com/go-sql-driver/mysql"
@@ -23,11 +24,11 @@ func InitDataBases() {
 	{
 		var err error
 		connString := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8&parseTime=true&loc=Asia%%2fShanghai",
-			config.Conf.DataBases.Source.Account,
-			config.Conf.DataBases.Source.Password,
-			config.Conf.DataBases.Source.Address,
-			config.Conf.DataBases.Source.Port,
-			config.Conf.DataBases.Source.Name)
+			config.Conf.Source.DataBase.Account,
+			config.Conf.Source.DataBase.Password,
+			config.Conf.Source.DataBase.Address,
+			config.Conf.Source.DataBase.Port,
+			config.Conf.Source.DataBase.Name)
 		sourceEngine, err = xorm.NewEngine("mysql", connString)
 		if err != nil {
 			logs.Emergency("源库连接失败:%s", err.Error())
@@ -38,7 +39,7 @@ func InitDataBases() {
 		}
 		sourceEngine.SetMaxIdleConns(2)
 		sourceEngine.SetMaxOpenConns(50)
-		logs.Info("初始化源库(%s)成功", config.Conf.DataBases.Source.Name)
+		logs.Info("初始化源库(%s)成功", config.Conf.Source.DataBase.Name)
 	}
 	//endregion
 
@@ -46,11 +47,11 @@ func InitDataBases() {
 	{
 		var err error
 		connString := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8&parseTime=true&loc=Asia%%2fShanghai",
-			config.Conf.DataBases.Target.Account,
-			config.Conf.DataBases.Target.Password,
-			config.Conf.DataBases.Target.Address,
-			config.Conf.DataBases.Target.Port,
-			config.Conf.DataBases.Target.Name)
+			config.Conf.Target.DataBase.Account,
+			config.Conf.Target.DataBase.Password,
+			config.Conf.Target.DataBase.Address,
+			config.Conf.Target.DataBase.Port,
+			config.Conf.Target.DataBase.Name)
 		targetEngine, err = xorm.NewEngine("mysql", connString)
 		if err != nil {
 			logs.Emergency("目标库连接失败:%s", err.Error())
@@ -61,7 +62,7 @@ func InitDataBases() {
 		}
 		targetEngine.SetMaxIdleConns(2)
 		targetEngine.SetMaxOpenConns(50)
-		logs.Info("初始化目标库(%s)成功", config.Conf.DataBases.Target.Name)
+		logs.Info("初始化目标库(%s)成功", config.Conf.Target.DataBase.Name)
 	}
 	//endregion
 

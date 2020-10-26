@@ -2,6 +2,7 @@ package service
 
 import (
 	"fmt"
+
 	"gitea.com/ha666/sync-mysql/model"
 	"xorm.io/xorm/schemas"
 )

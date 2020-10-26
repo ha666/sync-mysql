@@ -1,14 +1,15 @@
 package main
 
 import (
+	"runtime"
+
 	"gitea.com/ha666/sync-mysql/config"
 	"gitea.com/ha666/sync-mysql/service"
 	"github.com/ha666/golibs"
 	"github.com/ha666/logs"
-	"runtime"
 )
 
-const version = "2020.1026.1750"
+const version = "2020.1026.1823"
 
 func init() {
 	initLog()

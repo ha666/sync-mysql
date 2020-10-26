@@ -24,7 +24,7 @@ func StartWrite() {
 		logs.Info("开始读取源表:%s", tn)
 		offset := 0
 		for {
-			result, err := sourceEngine.QueryInterface(fmt.Sprintf("select * from %s limit %d,%d", tn, offset, config.PageSize))
+			result, err := sourceEngine.QueryInterface(fmt.Sprintf("select * from %s limit %d,%d", tn, offset, config.Conf.App.PageSize))
 			if err != nil {
 				logs.Emergency("查询表:%s出错:%s", tn, err.Error())
 			}
@@ -35,7 +35,7 @@ func StartWrite() {
 			if rows <= 0 {
 				break
 			}
-			offset = offset + config.PageSize
+			offset = offset + config.Conf.App.PageSize
 		}
 		logs.Info("完成读取源表:%s", tn)
 	}
