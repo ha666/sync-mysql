@@ -1,7 +1,6 @@
 app:
   page_size: 20
 source:
-  type: "db"
   database:
     name: "abc"
     address: "127.0.0.1"
@@ -9,10 +8,9 @@ source:
     account: "root"
     password: "1234567890"
 target:
-  type: "db"
-  database:
-    name: "ha666db"
-    address: "127.0.0.1"
-    port: 3306
-    account: "root"
-    password: "1234567890"
+  databases:
+    - name: "ha666db"
+      address: "127.0.0.1"
+      port: 3306
+      account: "root"
+      password: "1234567890"

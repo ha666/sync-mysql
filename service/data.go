@@ -1,6 +1,6 @@
 package service
 
-func insertData(args []interface{}) (err error) {
-	_, err = targetEngine.Exec(args...)
+func insertData(dbId int, args []interface{}) (err error) {
+	_, err = targetEngines[dbId].Exec(args...)
 	return err
 }

@@ -1,24 +1,15 @@
 package service
 
 import (
-	"fmt"
-
-	"gitea.com/ha666/sync-mysql/model"
+	"xorm.io/xorm"
 	"xorm.io/xorm/schemas"
 )
 
-func getTableSchemaList(dataBaseType model.DataBaseType) (schemaMap map[string][]*schemas.Column, err error) {
+func getTableSchemaList(e *xorm.Engine) (schemaMap map[string][]*schemas.Column, err error) {
 	var (
 		schemaSlice []*schemas.Table
 	)
-	switch dataBaseType {
-	default:
-		return schemaMap, fmt.Errorf("不支持的数据库类型:%v", dataBaseType)
-	case model.DataBaseSource:
-		schemaSlice, err = sourceEngine.DBMetas()
-	case model.DataBaseTarget:
-		schemaSlice, err = targetEngine.DBMetas()
-	}
+	schemaSlice, err = e.DBMetas()
 	if err != nil || schemaSlice == nil || len(schemaSlice) <= 0 {
 		return
 	}

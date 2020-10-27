@@ -5,11 +5,13 @@ import (
 	"os"
 
 	"github.com/ha666/golibs"
+	"github.com/ha666/logs"
 	"gopkg.in/yaml.v3"
 )
 
 var (
-	Conf *root
+	defaultConfigFile = "./config.yaml"
+	Conf              *root
 )
 
 //解析方法
@@ -20,11 +22,11 @@ func Parser() error {
 		yamlFile []byte
 	)
 	configFile := os.Getenv("sync_mysql_config_file")
-	if golibs.Length(configFile) > 0 {
-		yamlFile, err = ioutil.ReadFile(configFile)
-	} else {
-		yamlFile, err = ioutil.ReadFile("./config.yaml")
+	if golibs.Length(configFile) <= 0 {
+		configFile = defaultConfigFile
 	}
+	logs.Info("加载配置文件:%s", configFile)
+	yamlFile, err = ioutil.ReadFile(configFile)
 	if err != nil {
 		return err
 	}
