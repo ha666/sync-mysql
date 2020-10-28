@@ -78,7 +78,6 @@ func startRead(i uint64) {
 			logs.Error("解析sql:%s,失败:%s", get.Sql, err.Error())
 			continue
 		}
-		logs.Info("线程%d收到消息:%s", i, golibs.ToJson(stmt))
 		switch stmt.(type) {
 		default:
 			break
@@ -136,11 +135,8 @@ func toDatabases(dbId int, tableName string, Args []interface{}, targetColumns m
 		columns []*schemas.Column
 	)
 	columns, ok1 = targetSchemaColumns[dbId][tableName]
-	if !ok1 {
-		return fmt.Errorf("不支持的表:%s", tableName)
-	}
-	if columns == nil || len(columns) <= 0 {
-		return fmt.Errorf("无效的表:%s", tableName)
+	if !ok1 || columns == nil || len(columns) <= 0 {
+		return nil
 	}
 	data := golibs.NewStringBuilder()
 	data.Append("insert into ").Append(tableName)
@@ -151,7 +147,7 @@ func toDatabases(dbId int, tableName string, Args []interface{}, targetColumns m
 			if index > 0 {
 				data.Append(",")
 			}
-			data.Append(col.Name)
+			data.Append("`").Append(col.Name).Append("`")
 			index++
 		}
 	}
@@ -176,7 +172,7 @@ func toDatabases(dbId int, tableName string, Args []interface{}, targetColumns m
 			if index > 0 {
 				data.Append(", ")
 			}
-			data.Append(col.Name).Append("=?")
+			data.Append("`").Append(col.Name).Append("`").Append("=?")
 			index++
 		}
 	}
@@ -196,7 +192,7 @@ func toDatabases(dbId int, tableName string, Args []interface{}, targetColumns m
 						switch obj.(type) {
 						default:
 							logs.Emergency("表:%s,字段:%s,值:%v,无效的类型:%T", tableName, col.Name, obj, obj)
-						case int64:
+						case int, int64:
 							args = append(args, obj)
 						}
 					case schemas.Char, schemas.Varchar, schemas.NChar, schemas.NVarchar, schemas.TinyText, schemas.Text, schemas.NText, schemas.Clob, schemas.MediumText, schemas.LongText, schemas.Uuid, schemas.UniqueIdentifier, schemas.SysName:
@@ -241,7 +237,7 @@ func toDatabases(dbId int, tableName string, Args []interface{}, targetColumns m
 						switch obj.(type) {
 						default:
 							logs.Emergency("表:%s,字段:%s,值:%v,无效的类型:%T", tableName, col.Name, obj, obj)
-						case int64:
+						case int, int64:
 							args = append(args, obj)
 						}
 					case schemas.Char, schemas.Varchar, schemas.NChar, schemas.NVarchar, schemas.TinyText, schemas.Text, schemas.NText, schemas.Clob, schemas.MediumText, schemas.LongText, schemas.Uuid, schemas.UniqueIdentifier, schemas.SysName:

@@ -22,6 +22,7 @@ func StartWrite() {
 		logs.Info("开始读取源表:%s", tn)
 		offset := 0
 		for {
+			logs.Info("查询表:%s,offset:%d,limit:%d", tn, offset, config.Conf.App.PageSize)
 			result, err := sourceEngine.QueryInterface(fmt.Sprintf("select * from %s limit %d,%d", tn, offset, config.Conf.App.PageSize))
 			if err != nil {
 				logs.Emergency("查询表:%s出错:%s", tn, err.Error())
@@ -61,7 +62,7 @@ func parseSourceSchema(tableName string, result []map[string]interface{}) (int, 
 					if index > 0 {
 						data.Append(",")
 					}
-					data.Append(col.Name)
+					data.Append("`").Append(col.Name).Append("`")
 					index++
 				}
 			}
