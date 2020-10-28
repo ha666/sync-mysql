@@ -3,7 +3,6 @@ package service
 import (
 	"fmt"
 	"strconv"
-	"sync/atomic"
 	"time"
 
 	"gitea.com/ha666/sync-mysql/config"
@@ -22,6 +21,10 @@ func StartWrite() {
 		logs.Info("开始读取源表:%s", tn)
 		offset := 0
 		for {
+			if len(receiveQueue) > 20000 {
+				logs.Info("队列长度达到%d，暂停10秒", len(receiveQueue))
+				time.Sleep(10 * time.Second)
+			}
 			logs.Info("查询表:%s,offset:%d,limit:%d", tn, offset, config.Conf.App.PageSize)
 			result, err := sourceEngine.QueryInterface(fmt.Sprintf("select * from %s limit %d,%d", tn, offset, config.Conf.App.PageSize))
 			if err != nil {
@@ -129,45 +132,9 @@ func parseSourceSchema(tableName string, result []map[string]interface{}) (int, 
 				}
 			}
 			if len(args) > 0 {
-				msg := &sqlAndArgs{
+				receiveQueue <- &sqlAndArgs{
 					Sql:  data.ToString(),
 					Args: args,
-				}
-				switch atomic.AddUint64(&sequence, 1) % config.Conf.App.ThreadCount {
-				default:
-					logs.Error("【receiveMsg】无效的index:%d", index)
-				case 0:
-					receiveQueue0 <- msg
-				case 1:
-					receiveQueue1 <- msg
-				case 2:
-					receiveQueue2 <- msg
-				case 3:
-					receiveQueue3 <- msg
-				case 4:
-					receiveQueue4 <- msg
-				case 5:
-					receiveQueue5 <- msg
-				case 6:
-					receiveQueue6 <- msg
-				case 7:
-					receiveQueue7 <- msg
-				case 8:
-					receiveQueue8 <- msg
-				case 9:
-					receiveQueue9 <- msg
-				case 10:
-					receiveQueue10 <- msg
-				case 11:
-					receiveQueue11 <- msg
-				case 12:
-					receiveQueue12 <- msg
-				case 13:
-					receiveQueue13 <- msg
-				case 14:
-					receiveQueue14 <- msg
-				case 15:
-					receiveQueue15 <- msg
 				}
 			}
 		}

@@ -33,43 +33,8 @@ func startRead(i uint64) {
 			return
 		}
 	}()
-	var ch chan *sqlAndArgs
-	switch i {
-	case 0:
-		ch = receiveQueue0
-	case 1:
-		ch = receiveQueue1
-	case 2:
-		ch = receiveQueue2
-	case 3:
-		ch = receiveQueue3
-	case 4:
-		ch = receiveQueue4
-	case 5:
-		ch = receiveQueue5
-	case 6:
-		ch = receiveQueue6
-	case 7:
-		ch = receiveQueue7
-	case 8:
-		ch = receiveQueue8
-	case 9:
-		ch = receiveQueue9
-	case 10:
-		ch = receiveQueue10
-	case 11:
-		ch = receiveQueue11
-	case 12:
-		ch = receiveQueue12
-	case 13:
-		ch = receiveQueue13
-	case 14:
-		ch = receiveQueue14
-	case 15:
-		ch = receiveQueue15
-	}
 	for {
-		get := <-ch
+		get := <-receiveQueue
 		if get == nil {
 			continue
 		}
