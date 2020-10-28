@@ -7,6 +7,7 @@
 
 ```yaml
   page_size: 20
+  thread_count: 4
 ```
 
 #### 源配置(数据库和kafka二选一)
@@ -55,6 +56,7 @@
 ```yaml
 app:
   page_size: 20
+  thread_count: 4
 source:
   database:
     name: "abc"
@@ -76,6 +78,7 @@ target:
 ```yaml
 app:
   page_size: 20
+  thread_count: 4
 source:
   kafka:
     version: "0.10.2.1"
@@ -98,6 +101,7 @@ target:
 ```yaml
 app:
   page_size: 20
+  thread_count: 4
 source:
   database:
     name: "abc"
@@ -119,6 +123,7 @@ target:
 ```yaml
 app:
   page_size: 20
+  thread_count: 4
 source:
   database:
     name: "abc"
