@@ -6,5 +6,6 @@ import (
 
 func main() {
 	go service.StartWrite()
+	go service.StatisticQueues()
 	service.StartRead()
 }

@@ -132,7 +132,7 @@ func parseSourceSchema(tableName string, result []map[string]interface{}) (int, 
 					Sql:  data.ToString(),
 					Args: args,
 				}
-				switch atomic.AddUint64(&sequence, 1) % config.SyncThreadCount {
+				switch atomic.AddUint64(&sequence, 1) % config.Conf.App.ThreadCount {
 				default:
 					logs.Error("【receiveMsg】无效的index:%d", index)
 				case 0:
@@ -143,6 +143,30 @@ func parseSourceSchema(tableName string, result []map[string]interface{}) (int, 
 					receiveQueue2 <- msg
 				case 3:
 					receiveQueue3 <- msg
+				case 4:
+					receiveQueue4 <- msg
+				case 5:
+					receiveQueue5 <- msg
+				case 6:
+					receiveQueue6 <- msg
+				case 7:
+					receiveQueue7 <- msg
+				case 8:
+					receiveQueue8 <- msg
+				case 9:
+					receiveQueue9 <- msg
+				case 10:
+					receiveQueue10 <- msg
+				case 11:
+					receiveQueue11 <- msg
+				case 12:
+					receiveQueue12 <- msg
+				case 13:
+					receiveQueue13 <- msg
+				case 14:
+					receiveQueue14 <- msg
+				case 15:
+					receiveQueue15 <- msg
 				}
 			}
 		}

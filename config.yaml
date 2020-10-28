@@ -1,5 +1,6 @@
 app:
   page_size: 20
+  thread_count: 4
 source:
   database:
     name: "abc"

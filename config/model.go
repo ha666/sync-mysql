@@ -9,7 +9,8 @@ type root struct {
 }
 
 type app struct {
-	PageSize int `yaml:"page_size"`
+	PageSize    int    `yaml:"page_size"`
+	ThreadCount uint64 `yaml:"thread_count"`
 }
 
 type database struct {

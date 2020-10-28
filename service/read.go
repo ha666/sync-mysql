@@ -11,30 +11,22 @@ import (
 	"xorm.io/xorm/schemas"
 )
 
-var (
-	sequence      uint64
-	receiveQueue0 = make(chan *sqlAndArgs, 10000)
-	receiveQueue1 = make(chan *sqlAndArgs, 10000)
-	receiveQueue2 = make(chan *sqlAndArgs, 10000)
-	receiveQueue3 = make(chan *sqlAndArgs, 10000)
-)
-
 func StartRead() {
-	for i := 0; i < config.SyncThreadCount; i++ {
+	for i := uint64(0); i < config.Conf.App.ThreadCount; i++ {
 		go startReadLoop(i)
 	}
 	select {}
 }
 
-func startReadLoop(i int) {
+func startReadLoop(i uint64) {
 	for {
 		logs.Info("【startReadLoop】线程%d启动", i)
 		startRead(i)
-		time.Sleep(3 * time.Second)
+		time.Sleep(5 * time.Second)
 	}
 }
 
-func startRead(i int) {
+func startRead(i uint64) {
 	defer func() {
 		if err := recover(); err != nil {
 			logs.Error("【parseMsg】err:%v", err)
@@ -51,6 +43,30 @@ func startRead(i int) {
 		ch = receiveQueue2
 	case 3:
 		ch = receiveQueue3
+	case 4:
+		ch = receiveQueue4
+	case 5:
+		ch = receiveQueue5
+	case 6:
+		ch = receiveQueue6
+	case 7:
+		ch = receiveQueue7
+	case 8:
+		ch = receiveQueue8
+	case 9:
+		ch = receiveQueue9
+	case 10:
+		ch = receiveQueue10
+	case 11:
+		ch = receiveQueue11
+	case 12:
+		ch = receiveQueue12
+	case 13:
+		ch = receiveQueue13
+	case 14:
+		ch = receiveQueue14
+	case 15:
+		ch = receiveQueue15
 	}
 	for {
 		get := <-ch

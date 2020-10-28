@@ -9,7 +9,7 @@ import (
 	"github.com/ha666/logs"
 )
 
-const version = "2020.1028.933"
+const version = "2020.1028.1015"
 
 func init() {
 	initLog()
@@ -51,6 +51,12 @@ func initConfig() {
 	err := config.Parser()
 	if err != nil {
 		logs.Emergency("读取配置文件出错:%s", err.Error())
+	}
+	if config.Conf.App.PageSize < 0 || config.Conf.App.PageSize > 10000 {
+		logs.Emergency("配置出错:page_size范围是1~10000")
+	}
+	if config.Conf.App.ThreadCount < 0 || config.Conf.App.ThreadCount > 16 {
+		logs.Emergency("配置出错:thread_count范围是1~16")
 	}
 	logs.Info("初始化配置成功")
 }
