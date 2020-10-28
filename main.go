@@ -6,6 +6,5 @@ import (
 
 func main() {
 	go service.StartWrite()
-	go service.StartRead()
-	select {}
+	service.StartRead()
 }

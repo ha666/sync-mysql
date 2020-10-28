@@ -3,16 +3,13 @@ package service
 import (
 	"fmt"
 	"strconv"
+	"sync/atomic"
 	"time"
 
 	"gitea.com/ha666/sync-mysql/config"
 	"github.com/ha666/golibs"
 	"github.com/ha666/logs"
 	"xorm.io/xorm/schemas"
-)
-
-var (
-	queue = make(chan *sqlAndArgs, 10000)
 )
 
 type sqlAndArgs struct {
@@ -130,11 +127,22 @@ func parseSourceSchema(tableName string, result []map[string]interface{}) (int, 
 					}
 				}
 			}
-			index = 0
 			if len(args) > 0 {
-				queue <- &sqlAndArgs{
+				msg := &sqlAndArgs{
 					Sql:  data.ToString(),
 					Args: args,
+				}
+				switch atomic.AddUint64(&sequence, 1) % config.SyncThreadCount {
+				default:
+					logs.Error("【receiveMsg】无效的index:%d", index)
+				case 0:
+					receiveQueue0 <- msg
+				case 1:
+					receiveQueue1 <- msg
+				case 2:
+					receiveQueue2 <- msg
+				case 3:
+					receiveQueue3 <- msg
 				}
 			}
 		}

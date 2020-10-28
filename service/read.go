@@ -2,6 +2,7 @@ package service
 
 import (
 	"fmt"
+	"time"
 
 	"gitea.com/ha666/sync-mysql/config"
 	"github.com/ha666/golibs"
@@ -10,16 +11,58 @@ import (
 	"xorm.io/xorm/schemas"
 )
 
+var (
+	sequence      uint64
+	receiveQueue0 = make(chan *sqlAndArgs, 10000)
+	receiveQueue1 = make(chan *sqlAndArgs, 10000)
+	receiveQueue2 = make(chan *sqlAndArgs, 10000)
+	receiveQueue3 = make(chan *sqlAndArgs, 10000)
+)
+
 func StartRead() {
-	for get := range queue {
+	for i := 0; i < config.SyncThreadCount; i++ {
+		go startReadLoop(i)
+	}
+	select {}
+}
+
+func startReadLoop(i int) {
+	for {
+		logs.Info("【startReadLoop】线程%d启动", i)
+		startRead(i)
+		time.Sleep(3 * time.Second)
+	}
+}
+
+func startRead(i int) {
+	defer func() {
+		if err := recover(); err != nil {
+			logs.Error("【parseMsg】err:%v", err)
+			return
+		}
+	}()
+	var ch chan *sqlAndArgs
+	switch i {
+	case 0:
+		ch = receiveQueue0
+	case 1:
+		ch = receiveQueue1
+	case 2:
+		ch = receiveQueue2
+	case 3:
+		ch = receiveQueue3
+	}
+	for {
+		get := <-ch
 		if get == nil {
-			break
+			continue
 		}
 		stmt, err := sqlparser.Parse(get.Sql)
 		if err != nil {
 			logs.Error("解析sql:%s,失败:%s", get.Sql, err.Error())
 			continue
 		}
+		logs.Info("线程%d收到消息:%s", i, golibs.ToJson(stmt))
 		switch stmt.(type) {
 		default:
 			break
