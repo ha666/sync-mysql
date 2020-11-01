@@ -159,6 +159,8 @@ func toDatabases(dbId int, tableName string, Args []interface{}, targetColumns m
 							logs.Emergency("表:%s,字段:%s,值:%v,无效的类型:%T", tableName, col.Name, obj, obj)
 						case int, int64:
 							args = append(args, obj)
+						case float64:
+							args = append(args, int64(obj.(float64)))
 						}
 					case schemas.Char, schemas.Varchar, schemas.NChar, schemas.NVarchar, schemas.TinyText, schemas.Text, schemas.NText, schemas.Clob, schemas.MediumText, schemas.LongText, schemas.Uuid, schemas.UniqueIdentifier, schemas.SysName:
 						switch obj.(type) {

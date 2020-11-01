@@ -174,11 +174,11 @@ func InitKafkas() {
 
 	//初始化目标Kafka
 	{
-		targetKafkaName = golibs.Md5(strings.Join(config.Conf.Target.Kafka.Addresses, ",") + config.Conf.Target.Kafka.Topic)
-		if sourceKafkaName == targetKafkaName {
-			logs.Emergency("源kafka和目标kafka配置不能相同")
-		}
 		if config.Conf.Target.Kafka != nil {
+			targetKafkaName = golibs.Md5(strings.Join(config.Conf.Target.Kafka.Addresses, ",") + config.Conf.Target.Kafka.Topic)
+			if sourceKafkaName == targetKafkaName {
+				logs.Emergency("源kafka和目标kafka配置不能相同")
+			}
 			kafka.InitProducer(targetKafkaName,
 				config.Conf.Source.Kafka.Addresses)
 		}

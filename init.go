@@ -9,7 +9,7 @@ import (
 	"github.com/ha666/logs"
 )
 
-const version = "2020.1101.2116"
+const version = "2020.1101.2207"
 
 func init() {
 	initLog()

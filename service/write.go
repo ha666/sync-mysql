@@ -2,7 +2,10 @@ package service
 
 import (
 	"context"
+	"encoding/json"
+	"errors"
 	"fmt"
+	"gitea.com/ha666/sync-mysql/model"
 	"gitea.com/ha666/sync-mysql/plugin/kafka"
 	"strconv"
 	"time"
@@ -56,12 +59,68 @@ func StartKafkaWrite() {
 	for {
 		err := kafka.KConsume(ctx, sourceKafkaName, config.Conf.Source.Kafka.Topic, func(data []byte) error {
 			logs.Info("消息内容:%s", golibs.SliceByteToString(data))
-			return nil
+			var msg model.DataChangeMsg
+			if err := json.Unmarshal(data, &msg); err != nil {
+				logs.Error("解析消息错误:%s", err.Error())
+				return err
+			}
+			return parseDataChangeMsg(msg)
 		})
 		if err != nil {
 			logs.Error("接收消息错误:%s", err.Error())
 		}
 	}
+}
+
+func parseDataChangeMsg(msg model.DataChangeMsg) error {
+	if msg.Type != "insert" && msg.Type != "update" {
+		return errors.New("暂时不支持的消息类型:" + msg.Type)
+	}
+
+	sliceOrder := make([]string, 0)
+	for k, _ := range msg.Data {
+		sliceOrder = append(sliceOrder, k)
+	}
+
+	data := golibs.NewStringBuilder()
+	data.Append("insert into ").Append(msg.Table)
+	data.Append("(")
+
+	index := 0
+	for _, o := range sliceOrder {
+		if _, ok := msg.Data[o]; ok {
+			if index > 0 {
+				data.Append(",")
+			}
+			data.Append("`").Append(o).Append("`")
+			index++
+		}
+	}
+
+	data.Append(") values(")
+	index = 0
+	args := make([]interface{}, 0)
+	for _, o := range sliceOrder {
+		if v, ok := msg.Data[o]; ok {
+			if index > 0 {
+				data.Append(",")
+			}
+			data.Append("?")
+			args = append(args, v)
+			index++
+		}
+	}
+
+	data.Append(")")
+	index = 0
+
+	if len(args) > 0 {
+		receiveQueue <- &sqlAndArgs{
+			Sql:  data.ToString(),
+			Args: args,
+		}
+	}
+	return nil
 }
 
 func parseSourceSchema(tableName string, result []map[string]interface{}) (int, error) {
