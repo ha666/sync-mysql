@@ -1,7 +1,9 @@
 package service
 
 import (
+	"context"
 	"fmt"
+	"gitea.com/ha666/sync-mysql/plugin/kafka"
 	"strconv"
 	"time"
 
@@ -16,7 +18,10 @@ type sqlAndArgs struct {
 	Args []interface{}
 }
 
-func StartWrite() {
+func StartDBWrite() {
+	if config.Conf.Source.Database == nil {
+		return
+	}
 	for tn, _ := range sourceSchemaColumns {
 		logs.Info("开始读取源表:%s", tn)
 		offset := 0
@@ -40,6 +45,22 @@ func StartWrite() {
 			offset = offset + config.Conf.App.PageSize
 		}
 		logs.Info("完成读取源表:%s", tn)
+	}
+}
+
+func StartKafkaWrite() {
+	if config.Conf.Source.Kafka == nil {
+		return
+	}
+	ctx := context.TODO()
+	for {
+		err := kafka.KConsume(ctx, sourceKafkaName, config.Conf.Source.Kafka.Topic, func(data []byte) error {
+			logs.Info("消息内容:%s", golibs.SliceByteToString(data))
+			return nil
+		})
+		if err != nil {
+			logs.Error("接收消息错误:%s", err.Error())
+		}
 	}
 }
 

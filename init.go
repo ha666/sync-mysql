@@ -9,7 +9,7 @@ import (
 	"github.com/ha666/logs"
 )
 
-const version = "2020.1028.1619"
+const version = "2020.1101.2116"
 
 func init() {
 	initLog()
@@ -17,6 +17,7 @@ func init() {
 	initConfig()
 	service.InitDataBases()
 	service.CheckDataBases()
+	service.InitKafkas()
 }
 
 func initLog() {

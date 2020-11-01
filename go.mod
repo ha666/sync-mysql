@@ -3,6 +3,7 @@ module gitea.com/ha666/sync-mysql
 go 1.14
 
 require (
+	github.com/Shopify/sarama v1.27.2
 	github.com/cespare/xxhash v1.1.0 // indirect
 	github.com/go-sql-driver/mysql v1.5.0
 	github.com/ha666/golibs v2020.712.900+incompatible

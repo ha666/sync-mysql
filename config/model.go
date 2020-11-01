@@ -24,22 +24,16 @@ type database struct {
 type kafka struct {
 	Version   string   `yaml:"version"`
 	Addresses []string `yaml:"addresses"`
-	Topics    []string `yaml:"topics"`
+	Topic     string   `yaml:"topic"`
 	Consumer  string   `yaml:"consumer"`
 }
 
 type source struct {
-	Database database `yaml:"database"`
-	Kafka    kafka    `yaml:"kafka"`
-}
-
-type Kafkas struct {
-	Version   string   `yaml:"version"`
-	Addresses []string `yaml:"addresses"`
-	Topic     []string `yaml:"topic"`
+	Database *database `yaml:"database"`
+	Kafka    *kafka    `yaml:"kafka"`
 }
 
 type target struct {
-	Databases []database `yaml:"databases"`
-	Kafkas    []kafka    `yaml:"kafkas"`
+	Databases []*database `yaml:"databases"`
+	Kafka     *kafka      `yaml:"kafka"`
 }

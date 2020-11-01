@@ -5,7 +5,8 @@ import (
 )
 
 func main() {
-	go service.StartWrite()
+	go service.StartDBWrite()
+	go service.StartKafkaWrite()
 	go service.StatisticQueues()
 	service.StartRead()
 }

@@ -23,11 +23,11 @@
 
 ```yaml
   kafka:
-    version: "0.10.2.1"
+    version: "2.6.0"
     addresses:
-      - "127.0.0.1:9092"
-    topics:
-      - "db-log-1"
+     - "127.0.0.1:9092"
+    topic: "maxwell"
+    consumer: "maxwell-consumer"
 ```
 
 #### 目标配置
@@ -42,13 +42,11 @@
 ```
 
 ```yaml
-  kafkas:
-    - version: "0.10.2.1"
+  kafka:
+    - version: "2.6.0"
       addresses:
         - "127.0.0.1:9092"
-      topic:
-        - "db-log-2"
-      consumer: "consumer-obj"
+      topic: "db-log-2"
 ```
 
 #### 配置示例一：从数据库到数据库
@@ -81,12 +79,11 @@ app:
   thread_count: 4
 source:
   kafka:
-    version: "0.10.2.1"
+    version: "2.6.0"
     addresses:
-      - "127.0.0.1:9092"
-    topics:
-      - "db-log-1"
-    consumer: "consumer-obj"
+     - "127.0.0.1:9092"
+    topic: "maxwell"
+    consumer: "maxwell-consumer"
 target:
   databases:
     - name: "ha666db"
@@ -110,12 +107,11 @@ source:
     account: "root"
     password: "1234567890"
 target:
-  kafkas:
-    - version: "0.10.2.1"
-      addresses:
-        - "127.0.0.1:9092"
-      topics:
-        - "db-log-2"
+  kafka:
+    version: "2.6.0"
+    addresses:
+     - "127.0.0.1:9092"
+    topic: "bin-log-2"
 ```
 
 #### 配置示例四：从数据库到数据库和kafka
@@ -138,12 +134,11 @@ target:
       port: 3306
       account: "root"
       password: "1234567890"
-  kafkas:
-    - version: "0.10.2.1"
-      addresses:
-        - "127.0.0.1:9092"
-      topics:
-        - "db-log-2"
+  kafka:
+    version: "2.6.0"
+    addresses:
+     - "127.0.0.1:9092"
+    topic: "bin-log-2"
 ```
 
 

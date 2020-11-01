@@ -2,6 +2,9 @@ package service
 
 import (
 	"fmt"
+	"gitea.com/ha666/sync-mysql/plugin/kafka"
+	"github.com/ha666/golibs"
+	"strings"
 
 	"gitea.com/ha666/sync-mysql/config"
 	_ "github.com/go-sql-driver/mysql"
@@ -15,6 +18,8 @@ var (
 	targetEngines       []*xorm.Engine                 //目标库
 	sourceSchemaColumns map[string][]*schemas.Column   //源库数据库结构
 	targetSchemaColumns []map[string][]*schemas.Column //目标库数据库结构
+	sourceKafkaName     string                         //源Kafka名称
+	targetKafkaName     string                         //目标Kafka名称
 )
 
 //初始化数据库
@@ -22,24 +27,26 @@ func InitDataBases() {
 
 	//region 初始化源库
 	{
-		var err error
-		connString := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8&parseTime=true&loc=Asia%%2fShanghai",
-			config.Conf.Source.Database.Account,
-			config.Conf.Source.Database.Password,
-			config.Conf.Source.Database.Address,
-			config.Conf.Source.Database.Port,
-			config.Conf.Source.Database.Name)
-		sourceEngine, err = xorm.NewEngine("mysql", connString)
-		if err != nil {
-			logs.Emergency("源库连接失败:%s", err.Error())
+		if config.Conf.Source.Database != nil {
+			var err error
+			connString := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8&parseTime=true&loc=Asia%%2fShanghai",
+				config.Conf.Source.Database.Account,
+				config.Conf.Source.Database.Password,
+				config.Conf.Source.Database.Address,
+				config.Conf.Source.Database.Port,
+				config.Conf.Source.Database.Name)
+			sourceEngine, err = xorm.NewEngine("mysql", connString)
+			if err != nil {
+				logs.Emergency("源库连接失败:%s", err.Error())
+			}
+			if err = sourceEngine.Ping(); err != nil {
+				logs.Emergency("源库Ping失败:%s", err.Error())
+				return
+			}
+			sourceEngine.SetMaxIdleConns(2)
+			sourceEngine.SetMaxOpenConns(50)
+			logs.Info("初始化源库(%s)成功", config.Conf.Source.Database.Name)
 		}
-		if err = sourceEngine.Ping(); err != nil {
-			logs.Emergency("源库Ping失败:%s", err.Error())
-			return
-		}
-		sourceEngine.SetMaxIdleConns(2)
-		sourceEngine.SetMaxOpenConns(50)
-		logs.Info("初始化源库(%s)成功", config.Conf.Source.Database.Name)
 	}
 	//endregion
 
@@ -78,14 +85,16 @@ func CheckDataBases() {
 
 	//region 检查源数据库
 	{
-		logs.Info("开始检查源数据库")
-		var err error
-		sourceSchemaColumns, err = getTableSchemaList(sourceEngine)
-		if err != nil {
-			logs.Emergency("查询源数据库结构出错:%s", err.Error())
-		}
-		if sourceSchemaColumns == nil || len(sourceSchemaColumns) <= 0 {
-			logs.Emergency("查询源数据库结构出错:空的")
+		if config.Conf.Source.Database != nil {
+			logs.Info("开始检查源数据库")
+			var err error
+			sourceSchemaColumns, err = getTableSchemaList(sourceEngine)
+			if err != nil {
+				logs.Emergency("查询源数据库结构出错:%s", err.Error())
+			}
+			if sourceSchemaColumns == nil || len(sourceSchemaColumns) <= 0 {
+				logs.Emergency("查询源数据库结构出错:空的")
+			}
 		}
 	}
 	//endregion
@@ -141,6 +150,37 @@ func CheckDataBases() {
 					}
 				}
 			}
+		}
+	}
+	//endregion
+
+}
+
+//初始化Kafka
+func InitKafkas() {
+
+	//初始化源Kafka
+	{
+		if config.Conf.Source.Kafka != nil {
+			sourceKafkaName = golibs.Md5(strings.Join(config.Conf.Source.Kafka.Addresses, ",") + config.Conf.Source.Kafka.Topic)
+			kafka.InitConsumer(sourceKafkaName,
+				config.Conf.Source.Kafka.Addresses,
+				config.Conf.Source.Kafka.Topic,
+				config.Conf.Source.Kafka.Version,
+				config.Conf.Source.Kafka.Consumer)
+		}
+	}
+	//endregion
+
+	//初始化目标Kafka
+	{
+		targetKafkaName = golibs.Md5(strings.Join(config.Conf.Target.Kafka.Addresses, ",") + config.Conf.Target.Kafka.Topic)
+		if sourceKafkaName == targetKafkaName {
+			logs.Emergency("源kafka和目标kafka配置不能相同")
+		}
+		if config.Conf.Target.Kafka != nil {
+			kafka.InitProducer(targetKafkaName,
+				config.Conf.Source.Kafka.Addresses)
 		}
 	}
 	//endregion
