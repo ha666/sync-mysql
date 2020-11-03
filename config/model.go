@@ -3,9 +3,10 @@ package config
 // https://yaml.to-go.online
 
 type root struct {
-	App    app    `yaml:"app"`
-	Source source `yaml:"source"`
-	Target target `yaml:"target"`
+	App     app     `yaml:"app"`
+	Source  source  `yaml:"source"`
+	Target  target  `yaml:"target"`
+	Mapping mapping `yaml:"mapping"`
 }
 
 type app struct {
@@ -42,4 +43,13 @@ type source struct {
 type target struct {
 	Databases []*database    `yaml:"databases"`
 	Kafka     *kafkaProducer `yaml:"kafka"`
+}
+
+type table struct {
+	Source string `yaml:"source"`
+	Target string `yaml:"target"`
+}
+
+type mapping struct {
+	Tables map[string]string `yaml:"tables"`
 }

@@ -49,6 +49,14 @@
       topic: "db-log-2"
 ```
 
+#### 表名配置
+
+```yaml
+mapping:
+  tables:
+    "t_abcd": "t_cd"
+```
+
 #### 配置示例一：从数据库到数据库
 
 ```yaml

@@ -94,6 +94,15 @@ func toDatabases(dbId int, tableName string, Args []interface{}, targetColumns m
 	)
 	columns, ok1 = targetSchemaColumns[dbId][tableName]
 	if !ok1 || columns == nil || len(columns) <= 0 {
+		if config.Conf.Mapping.Tables != nil && len(config.Conf.Mapping.Tables) > 0 {
+			mappingName, ok2 := config.Conf.Mapping.Tables[tableName]
+			if ok2 && golibs.Length(mappingName) > 0 {
+				columns, ok1 = targetSchemaColumns[dbId][mappingName]
+				tableName = mappingName
+			}
+		}
+	}
+	if !ok1 || columns == nil || len(columns) <= 0 {
 		return nil
 	}
 	data := golibs.NewStringBuilder()
