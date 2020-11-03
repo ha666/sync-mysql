@@ -9,8 +9,8 @@ type root struct {
 }
 
 type app struct {
-	PageSize    int    `yaml:"page_size"`
-	ThreadCount uint64 `yaml:"thread_count"`
+	PageSize    int `yaml:"page_size"`
+	ThreadCount int `yaml:"thread_count"`
 }
 
 type database struct {
@@ -21,19 +21,25 @@ type database struct {
 	Password string `yaml:"password"`
 }
 
-type kafka struct {
-	Version   string   `yaml:"version"`
+type kafkaConsumer struct {
+	Version      string   `yaml:"version"`
+	Addresses    []string `yaml:"addresses"`
+	Topic        string   `yaml:"topic"`
+	Consumer     string   `yaml:"consumer"`
+	DatabaseName string   `yaml:"databaseName"`
+}
+
+type kafkaProducer struct {
 	Addresses []string `yaml:"addresses"`
 	Topic     string   `yaml:"topic"`
-	Consumer  string   `yaml:"consumer"`
 }
 
 type source struct {
-	Database *database `yaml:"database"`
-	Kafka    *kafka    `yaml:"kafka"`
+	Database *database      `yaml:"database"`
+	Kafka    *kafkaConsumer `yaml:"kafka"`
 }
 
 type target struct {
-	Databases []*database `yaml:"databases"`
-	Kafka     *kafka      `yaml:"kafka"`
+	Databases []*database    `yaml:"databases"`
+	Kafka     *kafkaProducer `yaml:"kafka"`
 }

@@ -28,6 +28,7 @@
      - "127.0.0.1:9092"
     topic: "maxwell"
     consumer: "maxwell-consumer"
+    databaseName: "test_db"
 ```
 
 #### 目标配置
@@ -43,8 +44,7 @@
 
 ```yaml
   kafka:
-    - version: "2.6.0"
-      addresses:
+    - addresses:
         - "127.0.0.1:9092"
       topic: "db-log-2"
 ```
@@ -84,6 +84,7 @@ source:
      - "127.0.0.1:9092"
     topic: "maxwell"
     consumer: "maxwell-consumer"
+    databaseName: "test_db"
 target:
   databases:
     - name: "ha666db"
@@ -108,7 +109,6 @@ source:
     password: "1234567890"
 target:
   kafka:
-    version: "2.6.0"
     addresses:
      - "127.0.0.1:9092"
     topic: "bin-log-2"
@@ -135,7 +135,6 @@ target:
       account: "root"
       password: "1234567890"
   kafka:
-    version: "2.6.0"
     addresses:
      - "127.0.0.1:9092"
     topic: "bin-log-2"

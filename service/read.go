@@ -11,14 +11,7 @@ import (
 	"xorm.io/xorm/schemas"
 )
 
-func StartRead() {
-	for i := uint64(0); i < config.Conf.App.ThreadCount; i++ {
-		go startReadLoop(i)
-	}
-	select {}
-}
-
-func startReadLoop(i uint64) {
+func StartReadLoop(i int) {
 	for {
 		logs.Info("【startReadLoop】线程%d启动", i)
 		startRead(i)
@@ -26,7 +19,7 @@ func startReadLoop(i uint64) {
 	}
 }
 
-func startRead(i uint64) {
+func startRead(i int) {
 	defer func() {
 		if err := recover(); err != nil {
 			logs.Error("【parseMsg】err:%v", err)

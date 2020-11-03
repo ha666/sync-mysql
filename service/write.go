@@ -76,6 +76,9 @@ func parseDataChangeMsg(msg model.DataChangeMsg) error {
 	if msg.Type != "insert" && msg.Type != "update" {
 		return errors.New("暂时不支持的消息类型:" + msg.Type)
 	}
+	if msg.Database != config.Conf.Source.Kafka.DatabaseName {
+		return nil
+	}
 
 	sliceOrder := make([]string, 0)
 	for k, _ := range msg.Data {
