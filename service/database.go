@@ -19,7 +19,7 @@ var (
 	sourceSchemaColumns map[string][]*schemas.Column   //源库数据库结构
 	targetSchemaColumns []map[string][]*schemas.Column //目标库数据库结构
 	sourceKafkaName     string                         //源Kafka名称
-	targetKafkaName     string                         //目标Kafka名称
+	//targetKafkaName     string                         //目标Kafka名称
 )
 
 //初始化数据库
@@ -172,17 +172,17 @@ func InitKafkas() {
 	}
 	//endregion
 
-	//初始化目标Kafka
-	{
-		if config.Conf.Target.Kafka != nil {
-			targetKafkaName = golibs.Md5(strings.Join(config.Conf.Target.Kafka.Addresses, ",") + config.Conf.Target.Kafka.Topic)
-			if sourceKafkaName == targetKafkaName {
-				logs.Emergency("源kafka和目标kafka配置不能相同")
-			}
-			kafka.InitProducer(targetKafkaName,
-				config.Conf.Source.Kafka.Addresses)
-		}
-	}
-	//endregion
+	////初始化目标Kafka
+	//{
+	//	if config.Conf.Target.Kafka != nil {
+	//		targetKafkaName = golibs.Md5(strings.Join(config.Conf.Target.Kafka.Addresses, ",") + config.Conf.Target.Kafka.Topic)
+	//		if sourceKafkaName == targetKafkaName {
+	//			logs.Emergency("源kafka和目标kafka配置不能相同")
+	//		}
+	//		kafka.InitProducer(targetKafkaName,
+	//			config.Conf.Source.Kafka.Addresses)
+	//	}
+	//}
+	////endregion
 
 }

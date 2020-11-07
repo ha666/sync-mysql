@@ -239,7 +239,3 @@ func toDatabases(dbId int, tableName string, Args []interface{}, targetColumns m
 	}
 	return nil
 }
-
-func toKafka() {
-
-}

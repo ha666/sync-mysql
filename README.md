@@ -4,6 +4,8 @@
 ### 配置
 
 #### 应用配置
+> page_size看情况配置，推荐是50~500，
+> thread_count根据数据库服务器的配置以及网络情况来定
 
 ```yaml
   page_size: 20
@@ -81,6 +83,8 @@ target:
 
 #### 配置示例二：从kafka到数据库
 
+> 使用的是maxwell的方案，具体的使用方法可以参考[https://github.com/zendesk/maxwell](https://github.com/zendesk/maxwell)
+
 ```yaml
 app:
   page_size: 20
@@ -101,53 +105,6 @@ target:
       account: "root"
       password: "1234567890"
 ```
-
-#### 配置示例三：从数据库到kafka
-
-```yaml
-app:
-  page_size: 20
-  thread_count: 4
-source:
-  database:
-    name: "abc"
-    address: "127.0.0.1"
-    port: 3306
-    account: "root"
-    password: "1234567890"
-target:
-  kafka:
-    addresses:
-     - "127.0.0.1:9092"
-    topic: "bin-log-2"
-```
-
-#### 配置示例四：从数据库到数据库和kafka
-
-```yaml
-app:
-  page_size: 20
-  thread_count: 4
-source:
-  database:
-    name: "abc"
-    address: "127.0.0.1"
-    port: 3306
-    account: "root"
-    password: "1234567890"
-target:
-  databases:
-    - name: "ha666db"
-      address: "127.0.0.1"
-      port: 3306
-      account: "root"
-      password: "1234567890"
-  kafka:
-    addresses:
-     - "127.0.0.1:9092"
-    topic: "bin-log-2"
-```
-
 
 #### 注意：
 + 如果源配置和目标配置都有数据库，那数据库配置不能完全相同

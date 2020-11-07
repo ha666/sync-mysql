@@ -30,10 +30,10 @@ type kafkaConsumer struct {
 	DatabaseName string   `yaml:"databaseName"`
 }
 
-type kafkaProducer struct {
-	Addresses []string `yaml:"addresses"`
-	Topic     string   `yaml:"topic"`
-}
+//type kafkaProducer struct {
+//	Addresses []string `yaml:"addresses"`
+//	Topic     string   `yaml:"topic"`
+//}
 
 type source struct {
 	Database *database      `yaml:"database"`
@@ -41,8 +41,8 @@ type source struct {
 }
 
 type target struct {
-	Databases []*database    `yaml:"databases"`
-	Kafka     *kafkaProducer `yaml:"kafka"`
+	Databases []*database `yaml:"databases"`
+	//Kafka     *kafkaProducer `yaml:"kafka"`
 }
 
 type table struct {
